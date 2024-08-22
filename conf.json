@@ -1,0 +1,36 @@
+{
+    "locations": [
+        {
+            "path": "/",
+            "auth": "static",
+            "auth-token": "admin",
+            "cache": "none",
+            "upstream": "aoi"
+        }
+    ],
+    "upstreams": [
+        {
+            "name": "aoi",
+            "algorithm": "random",
+            "transform": "aoi",
+            "server": [
+                {
+                    "type": "AzureOpenAI",
+                    "api-key": "api-key",
+                    "api-version": "2023-03-15-preview",
+                    "resource_name": "resource_name",
+                    "deployment_name": "deployment_name",
+                    "weight": 1,
+                    "timeout": 1000,
+                    "backup": false,
+                    "retry": 3
+                },
+                {
+                    "type": "CloudflareAI",
+                    "model": "@deepseek",
+                    "backup": true
+                }
+            ]
+        }
+    ]
+}

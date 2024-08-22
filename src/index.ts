@@ -1,11 +1,16 @@
-import { Hono, Context} from 'hono'
+import { Hono, Context } from 'hono'
 const app = new Hono()
 
 app.get('/', (c) => c.text('Welcome to Malacca!'))
 
-app.post('/v1/chat/completions', (c) => handleChat(c)).onError((err, c) => c.text('Error'))
+app.post('/azure-openai/:resource_name/:deployment_name/*', (c) => handleChat(c)).onError((err, c) => c.text('Error'))
 
 async function handleChat(c: Context) {
+  const resource_name = c.req.param('resource_name')
+  const deployment_name = c.req.param('deployment_name')
+  const function_name = c.req.path.slice(`/azure-openai/${resource_name}/${deployment_name}`.length)
+  console.log(resource_name, deployment_name, c.req.path, function_name)
+
   const body = await c.req.json()
 
   const response = await fetch(c.env['endpoint'], {
