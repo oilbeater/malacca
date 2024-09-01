@@ -3,6 +3,20 @@ import { Hono, Context } from 'hono'
 const app = new Hono()
 const azureOpenAI = new Hono()
 
+app.use(async (c, next) => {
+  const start = Date.now()
+  await next()
+
+  console.log(c.res.status)
+  const stream = c.res.body as ReadableStream
+  for await (const chunk of stream) {
+    console.log(chunk.toString())
+  }
+
+  const end = Date.now()
+  console.log(`${end - start}`)
+})
+
 azureOpenAI.post('/*', handleChat)
 app.get('/', (c) => c.text('Welcome to Malacca!'))
 app.route('/azure-openai/:resource_name/:deployment_name', azureOpenAI).onError((err, c) => c.text(err.message, 500))
