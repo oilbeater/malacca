@@ -23,45 +23,41 @@ async function handleChat(c: Context) {
 
   const azureEndpoint = `https://${resourceName}.openai.azure.com/openai/deployments/${deploymentName}/${functionName}`
   const body = await c.req.json()
-  const apiKey = c.req.header('api-key')
-  if (!apiKey) {
-    return c.text('api-key header is required', 401)
-  }
 
   const queryParams = new URLSearchParams(c.req.query()).toString()
   const urlWithQueryParams = `${azureEndpoint}?${queryParams}`
   const response = await fetch(urlWithQueryParams, {
-    method: 'POST',
+    method: c.req.method,
     body: JSON.stringify(body),
-    headers: {
-      'Content-Type': 'application/json',
-      'api-key': apiKey,
-    }
+    headers: c.req.header()
   })
 
-  const { readable, writable } = new TransformStream();
-  const writer = writable.getWriter();
-  const reader = response.body?.getReader();
-  if (!reader) {
-    return c.text('Internal Server Error', 500)
-  }
-  const decoder = new TextDecoder('utf-8');
-  (async () => { 
-    while (true) {
-      const { done, value } = await reader.read();
-
-      if (done) {
-        break;
-      }
-      await writer.write(value);
-      console.log(decoder.decode(value));
+  if (response.headers.get('transfer-encoding') === 'chunked') {
+    const { readable, writable } = new TransformStream();
+    const writer = writable.getWriter();
+    const reader = response.body?.getReader();
+    if (!reader) {
+      return c.text('Internal Server Error', 500)
     }
-    writer.close();
-  })();
+    const decoder = new TextDecoder('utf-8');
+    (async () => {
+      while (true) {
+        const { done, value } = await reader.read();
 
-  const res = new Response(readable, { ...response });
-  console.log(('return res'))
-  return res
+        if (done) {
+          break;
+        }
+        await writer.write(value);
+        console.log(decoder.decode(value));
+      }
+      writer.close();
+    })();
+
+    const res = new Response(readable, { ...response });
+    console.log(('return res'))
+    return res
+  }
+  return response
 }
 
 export default app
