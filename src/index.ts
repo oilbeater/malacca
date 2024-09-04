@@ -8,11 +8,6 @@ app.use(async (c, next) => {
   await next()
 
   console.log(c.res.status)
-  const stream = c.res.body as ReadableStream
-  for await (const chunk of stream) {
-    console.log(chunk.toString())
-  }
-
   const end = Date.now()
   console.log(`${end - start}`)
 })
@@ -43,7 +38,30 @@ async function handleChat(c: Context) {
       'api-key': apiKey,
     }
   })
-  return response
+
+  const { readable, writable } = new TransformStream();
+  const writer = writable.getWriter();
+  const reader = response.body?.getReader();
+  if (!reader) {
+    return c.text('Internal Server Error', 500)
+  }
+  const decoder = new TextDecoder('utf-8');
+  (async () => { 
+    while (true) {
+      const { done, value } = await reader.read();
+
+      if (done) {
+        break;
+      }
+      await writer.write(value);
+      console.log(decoder.decode(value));
+    }
+    writer.close();
+  })();
+
+  const res = new Response(readable, { ...response });
+  console.log(('return res'))
+  return res
 }
 
 export default app
