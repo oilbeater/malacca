@@ -50,7 +50,7 @@ async function handleChat(c: Context) {
         await writer.write(value);
         console.log(decoder.decode(value));
       }
-      writer.close();
+      return writer.close();
     })();
 
     const res = new Response(readable, { ...response });
