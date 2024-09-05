@@ -12,7 +12,11 @@
   "devDependencies": {
     "@cloudflare/vitest-pool-workers": "^0.4.5",
     "@cloudflare/workers-types": "^4.20240806.0",
-    "typescript": "^5.5.2",
+    "@eslint/js": "^9.9.1",
+    "@types/eslint__js": "^8.42.3",
+    "eslint": "^9.9.1",
+    "typescript": "^5.5.4",
+    "typescript-eslint": "^8.4.0",
     "vitest": "1.5.0",
     "wrangler": "^3.60.3"
   },
