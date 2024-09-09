@@ -1,14 +1,23 @@
 import { Hono, Context } from 'hono'
 
-const app = new Hono()
+type Bindings = {
+  MALACCA: AnalyticsEngineDataset,
+}
+const app = new Hono<{ Bindings: Bindings }>()
 const azureOpenAI = new Hono()
 
-app.use(async (c, next) => {
+app.use(async (c: Context, next) => {
   const start = Date.now()
+  console.log(c.env)
   await next()
 
   console.log(c.res.status)
   const end = Date.now()
+  c.env.MALACCA.writeDataPoint({
+    'blobs': ['azure-openai', 'chat'],
+    'doubles': [end-start],
+    'indexes': ['azure'],
+  })
   console.log(`${end - start}`)
 })
 
