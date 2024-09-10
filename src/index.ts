@@ -1,5 +1,4 @@
 import { Hono, Context } from 'hono'
-import { encodeChat } from 'gpt-tokenizer'
 
 type Bindings = {
   MALACCA: AnalyticsEngineDataset,
@@ -40,7 +39,7 @@ async function handleChat(c: Context) {
     return c.text('Internal Server Error', 500)
   }
   const decoder = new TextDecoder('utf-8');
-  let prompt_tokens = encodeChat(body['messages']).length;
+  let prompt_tokens = 0;
   let completion_tokens = 0;
   
   if (response.status == 200) {

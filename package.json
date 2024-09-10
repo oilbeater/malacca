@@ -21,7 +21,6 @@
     "wrangler": "^3.60.3"
   },
   "dependencies": {
-    "gpt-tokenizer": "^2.2.1",
     "hono": "^4.5.5"
   }
 }
