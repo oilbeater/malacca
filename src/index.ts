@@ -42,35 +42,39 @@ async function handleChat(c: Context) {
   let prompt_tokens = 0;
   let completion_tokens = 0;
   
-  if (response.status == 200) {
-    (async () => {
-      while (true) {
-        const { done, value } = await reader.read()
-        if (done) {
-          break;
-        }
-        await writer.write(value)
-  
-        if (response.headers.get('content-type') === 'application/json') {
-          const usage = JSON.parse(decoder.decode(value))['usage']
+  (async () => {
+    let buf = ''
+    while (true) {
+      const { done, value } = await reader.read()
+      if (done) {
+        break;
+      }
+      await writer.write(value)
+      buf += decoder.decode(value)
+    }
+    console.log('done')
+    await writer.close()
+    if (response.status === 200) { 
+      if (response.headers.get('content-type') === 'application/json') {
+        const usage = JSON.parse(buf)['usage']
+        if (usage) {
           prompt_tokens = usage['prompt_tokens'] | 0
           completion_tokens = usage['completion_tokens'] | 0
-        } else {
-          completion_tokens += 1
         }
+      } else {
+        completion_tokens = buf.split('\n\n').length - 1
       }
-  
-      const duration = Date.now() - c.get('start')
-      c.env.MALACCA.writeDataPoint({
-        'blobs': [c.get('endpoint'), c.req.path, c.res.status],
-        'doubles': [duration, prompt_tokens, completion_tokens],
-        'indexes': ['azure'],
-      })
-      console.log('write data point')
-      await writer.close()
-    })();
-  }
-
+    }
+    
+    console.log(completion_tokens)
+    const duration = Date.now() - c.get('start')
+    c.env.MALACCA.writeDataPoint({
+      'blobs': [c.get('endpoint'), c.req.path, response.status],
+      'doubles': [duration, prompt_tokens, completion_tokens],
+      'indexes': ['azure'],
+    })
+    console.log('write data point')
+  })();
 
   return new Response(readable, response)
 }
