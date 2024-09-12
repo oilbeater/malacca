@@ -2,7 +2,10 @@ import { Hono, Context } from 'hono'
 
 type Bindings = {
   MALACCA: AnalyticsEngineDataset,
+  MALACCA_USER: KVNamespace,
+  MALACCA_CACHE: KVNamespace,
 }
+
 const app = new Hono<{ Bindings: Bindings }>()
 const azureOpenAI = new Hono()
 
@@ -26,6 +29,31 @@ async function handleChat(c: Context) {
 
   const queryParams = new URLSearchParams(c.req.query()).toString()
   const urlWithQueryParams = `${azureEndpoint}?${queryParams}`
+
+
+  async function generateCacheKey(urlWithQueryParams: string, body: any): Promise<string> {
+    const cacheKey = await crypto.subtle.digest(
+      'SHA-256',
+      new TextEncoder().encode(urlWithQueryParams + JSON.stringify(body))
+    );
+    return Array.from(new Uint8Array(cacheKey))
+      .map(b => b.toString(16).padStart(2, '0'))
+      .join('');
+  }
+
+  const cacheKeyHex = await generateCacheKey(urlWithQueryParams, body);
+
+  console.log('cacheGetKey', cacheKeyHex)
+  const responseFromCache = await c.env.MALACCA_CACHE.get(
+    cacheKeyHex,
+    "stream"
+  )
+
+  if (responseFromCache) {
+    console.log('cache hit')
+    return new Response(responseFromCache)
+  }
+
   const response = await fetch(urlWithQueryParams, {
     method: c.req.method,
     body: JSON.stringify(body),
@@ -74,6 +102,9 @@ async function handleChat(c: Context) {
       'indexes': ['azure'],
     })
     console.log('write data point')
+
+    await c.env.MALACCA_CACHE.put(cacheKeyHex, buf);
+    console.log('write cache')
   })();
 
   return new Response(readable, response)
