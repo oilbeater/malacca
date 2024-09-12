@@ -30,6 +30,12 @@ async function handleChat(c: Context) {
   const queryParams = new URLSearchParams(c.req.query()).toString()
   const urlWithQueryParams = `${azureEndpoint}?${queryParams}`
 
+  const apiKey = c.req.header('api-key')
+  const realKey = await c.env.MALACCA_USER.get(apiKey)
+  if (!realKey) {
+    return c.text('Unauthorized', 401)
+  }
+
 
   async function generateCacheKey(urlWithQueryParams: string, body: any): Promise<string> {
     const cacheKey = await crypto.subtle.digest(
@@ -54,10 +60,13 @@ async function handleChat(c: Context) {
     return new Response(responseFromCache)
   }
 
+  const headers = new Headers(c.req.header())
+  headers.set('api-key', realKey)
+
   const response = await fetch(urlWithQueryParams, {
     method: c.req.method,
     body: JSON.stringify(body),
-    headers: c.req.header()
+    headers: headers
   })
 
   const { readable, writable } = new TransformStream()
