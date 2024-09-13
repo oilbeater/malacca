@@ -48,15 +48,14 @@ async function handleChat(c: Context) {
   }
 
   const cacheKeyHex = await generateCacheKey(urlWithQueryParams, body);
-
-  console.log('cacheGetKey', cacheKeyHex)
+  console.log(body)
+  
   const responseFromCache = await c.env.MALACCA_CACHE.get(
     cacheKeyHex,
     "stream"
   )
 
   if (responseFromCache) {
-    console.log('cache hit')
     return new Response(responseFromCache)
   }
 
@@ -89,7 +88,6 @@ async function handleChat(c: Context) {
       await writer.write(value)
       buf += decoder.decode(value)
     }
-    console.log('done')
     await writer.close()
     if (response.status === 200) { 
       if (response.headers.get('content-type') === 'application/json') {
@@ -103,17 +101,15 @@ async function handleChat(c: Context) {
       }
     }
     
-    console.log(completion_tokens)
     const duration = Date.now() - c.get('start')
     c.env.MALACCA.writeDataPoint({
       'blobs': [c.get('endpoint'), c.req.path, response.status],
       'doubles': [duration, prompt_tokens, completion_tokens],
       'indexes': ['azure'],
     })
-    console.log('write data point')
+    console.log(buf)
 
     await c.env.MALACCA_CACHE.put(cacheKeyHex, buf);
-    console.log('write cache')
   })();
 
   return new Response(readable, response)
