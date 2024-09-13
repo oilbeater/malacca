@@ -72,12 +72,12 @@ binding = "MALACCA"
 # Docs: https://developers.cloudflare.com/workers/wrangler/configuration/#kv-namespaces
 [[kv_namespaces]]
 binding = "MALACCA_USER"
-id = "229576964b13f29e66c3c205866c8730"
+id = "172f036565724816a51f04789deeecd0"
 preview_id = "6967d465fa6d4e32ba9a4f8b8379d0e1"
 
 [[kv_namespaces]]
 binding = "MALACCA_CACHE"
-id = "229576964b13f29e66c3c205866c8730"
+id = "8ef9a507dca94b21b4f64e40952c0dfd"
 preview_id = "681694b3cc0d44b8bc6c251eb4b42212"
 
 # Bind an mTLS certificate. Use to present a client certificate when communicating with another service.
