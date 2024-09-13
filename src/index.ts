@@ -88,7 +88,6 @@ async function handleChat(c: Context) {
       await writer.write(value)
       buf += decoder.decode(value)
     }
-    await writer.close()
     if (response.status === 200) { 
       if (response.headers.get('content-type') === 'application/json') {
         const usage = JSON.parse(buf)['usage']
@@ -110,6 +109,7 @@ async function handleChat(c: Context) {
     console.log(buf)
 
     await c.env.MALACCA_CACHE.put(cacheKeyHex, buf);
+    await writer.close()
   })();
 
   return new Response(readable, response)
