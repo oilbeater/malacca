@@ -1,6 +1,6 @@
 import { Hono, Context } from 'hono'
 
-type Bindings = {
+interface Bindings {
   MALACCA: AnalyticsEngineDataset,
   MALACCA_USER: KVNamespace,
   MALACCA_CACHE: KVNamespace,
@@ -56,7 +56,7 @@ async function handleChat(c: Context) {
   )
 
   if (responseFromCache) {
-    return new Response(responseFromCache)
+    return new Response(responseFromCache, {headers: {'malacca-cache-status': 'hit'}})
   }
 
   const headers = new Headers(c.req.header())
@@ -112,7 +112,9 @@ async function handleChat(c: Context) {
     await writer.close()
   })();
 
-  return new Response(readable, response)
+  const newResponse = new Response(readable, response)
+  newResponse.headers.append('malacca-cache-status', 'miss')
+  return newResponse
 }
 
 export default app
