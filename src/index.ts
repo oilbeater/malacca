@@ -114,7 +114,7 @@ async function handleChat(c: Context) {
     await writer.close()
   })();
 
-  const newResponse = new Response(readable, response)
+  const newResponse = new Response(readable, {status: response.status, headers: response.headers})
   newResponse.headers.append('malacca-cache-status', 'miss')
   return newResponse
 }
