@@ -9,23 +9,63 @@ const IncomingRequest = Request<unknown, IncomingRequestCfProperties>;
 
 beforeAll(async () => {
 	// Set up Cloudflare KV
-	console.log(env)
 	await env.MALACCA_USER.put('oilbeater', import.meta.env.VITE_AZURE_API_KEY);
 });
 
 describe('Welcome to Malacca worker', () => {
-	it('responds with Welcome to Malacca! (unit style)', async () => {
-		const request = new IncomingRequest('http://example.com');
-		// Create an empty context to pass to `worker.fetch()`.
-		const ctx = createExecutionContext();
-		const response = await worker.fetch(request, env, ctx);
-		// Wait for all `Promise`s passed to `ctx.waitUntil()` to settle before running test assertions
-		await waitOnExecutionContext(ctx);
-		expect(await response.text()).toMatchInlineSnapshot(`"Welcome to Malacca!"`);
-	});
-
 	it('responds with Welcome to Malacca! (integration style)', async () => {
 		const response = await SELF.fetch('https://example.com');
 		expect(await response.text()).toMatchInlineSnapshot(`"Welcome to Malacca!"`);
+	});
+});
+
+describe('Test Cache', () => {
+	console.log(import.meta.env)
+	const url = `https://example.com/azure-openai/${import.meta.env.VITE_AZURE_RESOURCE_NAME}/${import.meta.env.VITE_AZURE_DEPLOYMENT_NAME}/chat/completions?api-version=2024-07-01-preview`;
+	const body = `
+	{
+  "messages": [
+    {
+      "role": "system",
+      "content": [
+        {
+          "type": "text",
+          "text": "You are an AI assistant that helps people find information."
+        }
+      ]
+    },
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "text",
+          "text": "Tell me a very short story about sunwukong"
+        }
+      ]
+    }
+  ],
+  "temperature": 0.7,
+  "top_p": 0.95,
+  "max_tokens": 800
+}`
+	console.log(url)
+	it('with cache first response should with header malacca-cache-status: miss and following response with hit', async () => {
+		let start = Date.now();
+    let response = await SELF.fetch(url, { method: 'POST', body: body, headers: { 'Content-Type': 'application/json', 'api-key': 'oilbeater' } });
+    const value = await response.json()
+    const duration = Date.now() - start
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get('malacca-cache-status')).toBe('miss');
+
+    start = Date.now();
+    response = await SELF.fetch(url, {method: 'POST', body: body, headers: {'Content-Type': 'application/json', 'api-key': 'oilbeater'}});
+    const cacheValue = await response.json()
+    const cacheDuration = Date.now() - start
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get('malacca-cache-status')).toBe('hit');
+    expect(value).toEqual(cacheValue)
+    expect(duration/2).toBeGreaterThan(cacheDuration)
 	});
 });

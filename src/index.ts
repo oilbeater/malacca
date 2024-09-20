@@ -99,13 +99,15 @@ async function handleChat(c: Context) {
         completion_tokens = buf.split('\n\n').length - 1
       }
     }
-    
+
     const duration = Date.now() - c.get('start')
-    c.env.MALACCA.writeDataPoint({
-      'blobs': [c.get('endpoint'), c.req.path, response.status],
-      'doubles': [duration, prompt_tokens, completion_tokens],
-      'indexes': ['azure'],
-    })
+    if (c.env.MALACCA) {
+      c.env.MALACCA.writeDataPoint({
+        'blobs': [c.get('endpoint'), c.req.path, response.status],
+        'doubles': [duration, prompt_tokens, completion_tokens],
+        'indexes': ['azure'],
+      })
+    }
     console.log(buf)
 
     await c.env.MALACCA_CACHE.put(cacheKeyHex, buf);
