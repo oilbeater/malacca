@@ -110,7 +110,7 @@ async function handleChat(c: Context) {
     }
     console.log(buf)
 
-    await c.env.MALACCA_CACHE.put(cacheKeyHex, buf);
+    c.executionCtx.waitUntil(c.env.MALACCA_CACHE.put(cacheKeyHex, buf))
     await writer.close()
   })();
 
