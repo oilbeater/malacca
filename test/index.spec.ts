@@ -57,6 +57,7 @@ describe('Test Cache', () => {
     const duration = Date.now() - start
 
     expect(response.status).toBe(200);
+    expect(response.headers.get('content-type')).toContain('application/json');
     expect(response.headers.get('malacca-cache-status')).toBe('miss');
 
     start = Date.now();
@@ -78,6 +79,7 @@ describe('Test Cache', () => {
     const duration = Date.now() - start
 
     expect(response.status).toBe(200);
+    expect(response.headers.get('content-type')).toContain('text/event-stream');
     expect(response.headers.get('malacca-cache-status')).toBe('miss');
 
     start = Date.now();
