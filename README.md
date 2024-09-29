@@ -2,25 +2,24 @@
 
 **Malacca** is an open-source AI gateway designed to become the central hub in the world of AI.
 
-It is fully *CloudFlare Native*: allowing for global scale deployment without any maintenance overhead.
+It is fully **CloudFlare Native**: allowing for global scale deployment without any maintenance overhead.
 
-It is written in *TypeScript*: ensuring adaptability to the rapidly evolving AI ecosystem and catering to the diverse needs of application developers.
+It is written in **TypeScript**: ensuring adaptability to the rapidly evolving AI ecosystem and catering to the diverse needs of application developers.
 
 ## Features
 
-- **Global Scale, Zero Maintenance**
+- 🌍 **Global Scale, Zero Maintenance**
   - Built on Cloudflare Workers, Malacca offers seamless global deployment without the need to manage servers.
   
-- **High Flexibility and Extensibility**
+- 🧩 **High Flexibility and Extensibility**
   - Written in TypeScript, which provides excellent readability and allows easy customization and expansion of features.
   
-- **Comprehensive Feature Set**
-  - **Token Usage Monitoring**: Track the usage of tokens in real time, allowing you to understand and manage API costs.
-  - **Caching Mechanism**: Reduce latency and costs by caching repeat requests.
-  - **Rate Limiting**: Protect upstream API resources by controlling request rates.
-  - **Real-Time Logging**: Monitor requests and responses to ease debugging and track usage.
-  - **Virtual Key Management**: Manage access permissions using virtual keys, providing more granular control over API access.
-  - **Offline Logging**: Store logs even when offline to ensure data integrity and completeness.
+- 🛠️ **Comprehensive Feature Set**
+  - 📊 **Token Usage Monitoring**: Track the usage of tokens in real time, allowing you to understand and manage API costs.
+  - ⚡ **Caching Mechanism**: Reduce latency and costs by caching repeat requests.
+  - 🔑 **Virtual Key Management**: Manage access permissions using virtual keys, providing more granular control over API access.
+  - 🚦 **Rate Limiting**: Protect upstream API resources by controlling request rates.
+  - 📋 **Logging**: Monitor requests and responses to ease debugging and track usage.
 
 ## Quick Start
 
