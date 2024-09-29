@@ -1,6 +1,6 @@
 ![Malacca Logo](./docs/malacca.jpg)
 
-Malacca is an open-source AI gateway designed to become the central hub in the world of AI.
+**Malacca** is an open-source AI gateway designed to become the central hub in the world of AI.
 
 It is fully *CloudFlare Native*: allowing for global scale deployment without any maintenance overhead.
 
