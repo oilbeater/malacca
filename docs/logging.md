@@ -1,4 +1,4 @@
-# Logging
+# 📋Logging
 
 Malacca can record all the API request and response body for further fine-tune or reinforcement learning.
 

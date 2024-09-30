@@ -1,4 +1,4 @@
-# Caching
+# ⚡ Caching
 
 Malacca Caching can significantly enhance the performance and efficiency of your LLM (Large Language Model) applications. Here are some key benefits:
 

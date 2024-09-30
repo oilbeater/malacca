@@ -1,4 +1,4 @@
-# Virtual Key
+# 🔑 Virtual Key
 
 Virtual Key is a security feature that allows you to protect your real API key by providing a separate, temporary key for authentication. This feature enhances the security of your API usage in several ways:
 
