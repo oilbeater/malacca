@@ -1,13 +1,14 @@
 import { Hono, Context } from 'hono';
 import { AIProvider, AIRequestParams } from '../types';
 import { generateCacheKey } from '../utils/cache';
-import { recordAnalytics } from '../utils/analytics';
-
+import { recordAnalytics, timingMiddleware } from '../utils/analytics';
+import { bufferMiddleware } from '../utils/buffer';
 const BasePath = '/azure-openai/:resource_name/deployments/:deployment_name';
 const ProviderName = 'azure-openai';
 
 const azureOpenAIRoute = new Hono();
 
+azureOpenAIRoute.use(bufferMiddleware, timingMiddleware);
 azureOpenAIRoute.post('/*', async (c) => {
     const resourceName = c.req.param('resource_name') || '';
     const deploymentName = c.req.param('deployment_name') || '';
@@ -29,7 +30,6 @@ export const azureOpenAIProvider: AIProvider = {
         const queryParams = new URLSearchParams(c.req.query()).toString();
         const urlWithQueryParams = `${azureEndpoint}?${queryParams}`;
 
-        console.log({request_body: body})
         const apiKey = c.req.header('api-key');
         const realKey = await c.env.MALACCA_USER.get(apiKey);
         if (!realKey) {
@@ -87,7 +87,6 @@ export const azureOpenAIProvider: AIProvider = {
 
             const duration = Date.now() - startTime;
             recordAnalytics(c, ProviderName, duration, prompt_tokens, completion_tokens);
-            console.log({response_body: buf})
             if (response.status === 200) {
                 c.executionCtx.waitUntil(c.env.MALACCA_CACHE.put(cacheKeyHex, buf, {expirationTtl: 3600}));
             }

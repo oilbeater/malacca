@@ -1,4 +1,4 @@
-import { Context } from 'hono';
+import { Context, MiddlewareHandler } from 'hono';
 
 export function recordAnalytics(
   c: Context,
@@ -15,3 +15,25 @@ export function recordAnalytics(
     });
   }
 }
+
+export const timingMiddleware: MiddlewareHandler = async (c, next) => {
+  const startTime = Date.now();
+
+  await next();
+  
+  c.executionCtx.waitUntil((async () => {
+    await c.get('bufferPromise')
+    const endTime = Date.now();
+    const duration = endTime - startTime;
+    console.log(`Request duration: ${duration}ms`);
+  })());
+};
+
+
+
+
+
+
+
+
+
