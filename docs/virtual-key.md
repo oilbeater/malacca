@@ -24,7 +24,7 @@ Virtual Key is implemented by Cloudflare Worker KV, you can easily add a delete 
 2. Revoke a Virtual Key
 
     ```bash
-    npx wrangler kv key delete malacca --binding MALACCA_USER
+    npx wrangler kv key delete ${VIRTUAL_KEY} --binding MALACCA_USER
     ```
 
 You can also manage the KV pairs directly from Cloudflare Worker KV web console.

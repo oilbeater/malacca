@@ -21,3 +21,5 @@ id = "172f036565724816a51f04789deeecd0"
 binding = "MALACCA_CACHE"
 id = "8ef9a507dca94b21b4f64e40952c0dfd"
 
+[observability]
+enabled = true

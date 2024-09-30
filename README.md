@@ -17,11 +17,11 @@ It is written in **TypeScript**: ensuring adaptability to the rapidly evolving A
   - Written in TypeScript, which provides excellent readability and allows easy customization and expansion of features.
   
 - 🛠️ **Comprehensive Feature Set**
+  - 🔑 **Virtual Key**: Manage access permissions using virtual keys, providing more granular control over API access.
+  - ⚡ **Caching**: Reduce latency and costs by caching repeat requests.
   - 📊 **Token Usage Monitoring**: Track the usage of tokens in real time, allowing you to understand and manage API costs.
-  - ⚡ **Caching Mechanism**: Reduce latency and costs by caching repeat requests.
-  - 🔑 **Virtual Key Management**: Manage access permissions using virtual keys, providing more granular control over API access.
+  - 📋 **Logging**: Record requests and responses to further fine-tune or reinforcement learning.
   - 🚦 **Rate Limiting**: Protect upstream API resources by controlling request rates.
-  - 📋 **Logging**: Monitor requests and responses to ease debugging and track usage.
 
 ## Quick Start
 
