@@ -88,7 +88,7 @@ export const azureOpenAIProvider: AIProvider = {
             recordAnalytics(c, ProviderName, duration, prompt_tokens, completion_tokens);
 
             if (response.status === 200) {
-                c.executionCtx.waitUntil(c.env.MALACCA_CACHE.put(cacheKeyHex, buf));
+                c.executionCtx.waitUntil(c.env.MALACCA_CACHE.put(cacheKeyHex, buf, {expirationTtl: 3600}));
             }
             await writer.close();
         })();
