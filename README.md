@@ -2,7 +2,7 @@
 
 **Malacca** is an open-source AI gateway designed to become the central hub in the world of AI.
 
-It is fully **CloudFlare Native**: allowing for global scale deployment without any maintenance overhead.
+It is fully **CloudFlare Native**: allowing for global scale deployment without any maintenance overhead and free for 1M requests each day.
 
 It is written in **TypeScript**: ensuring adaptability to the rapidly evolving AI ecosystem and catering to the diverse needs of application developers.
 
@@ -22,6 +22,8 @@ It is written in **TypeScript**: ensuring adaptability to the rapidly evolving A
   - 📋 **Logging**: Monitor requests and responses to ease debugging and track usage.
 
 ## Quick Start
+
+[![Deploy to Cloudflare Workers](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/oilbeater/malacca)
 
 ### Prerequisites
 
