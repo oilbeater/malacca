@@ -20,7 +20,7 @@ describe('Welcome to Malacca worker', () => {
 });
 
 describe('Test Cache', () => {
-	const url = `https://example.com/azure-openai/${import.meta.env.VITE_AZURE_RESOURCE_NAME}/${import.meta.env.VITE_AZURE_DEPLOYMENT_NAME}/chat/completions?api-version=2024-07-01-preview`;
+	const url = `https://example.com/azure-openai/${import.meta.env.VITE_AZURE_RESOURCE_NAME}/deployments/${import.meta.env.VITE_AZURE_DEPLOYMENT_NAME}/chat/completions?api-version=2024-07-01-preview`;
   const createRequestBody = (stream: boolean) => `
   {
     "messages": [
@@ -38,7 +38,7 @@ describe('Test Cache', () => {
         "content": [
           {
             "type": "text",
-            "text": "Tell me a very short story about sunwukong"
+            "text": "Tell me a very short story about Malacca"
           }
         ]
       }
@@ -93,4 +93,34 @@ describe('Test Cache', () => {
     expect(duration/2).toBeGreaterThan(cacheDuration)
   });
 
+  it('should not cache non-200 responses', async () => {
+    const invalidBody = JSON.stringify({
+      messages: [{ role: "user", content: "This is an invalid request" }],
+      stream: "invalid-model",
+      temperature: 0.7,
+      top_p: 0.95,
+      max_tokens: 800,
+    });
+
+    // First request - should return a non-200 response
+    let response = await SELF.fetch(url, {
+      method: 'POST',
+      body: invalidBody,
+      headers: { 'Content-Type': 'application/json', 'api-key': 'oilbeater' }
+    });
+
+    expect(response.status).not.toBe(200);
+    expect(response.headers.get('malacca-cache-status')).toBe('miss');
+
+    // Second request with the same invalid body
+    response = await SELF.fetch(url, {
+      method: 'POST',
+      body: invalidBody,
+      headers: { 'Content-Type': 'application/json', 'api-key': 'oilbeater' }
+    });
+
+    expect(response.status).not.toBe(200);
+    // Should still be a cache miss, as non-200 responses are not cached
+    expect(response.headers.get('malacca-cache-status')).toBe('miss');
+  });
 });

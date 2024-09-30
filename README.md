@@ -6,6 +6,8 @@ It is fully **CloudFlare Native**: allowing for global scale deployment without 
 
 It is written in **TypeScript**: ensuring adaptability to the rapidly evolving AI ecosystem and catering to the diverse needs of application developers.
 
+> Malacca is still an early-stage project, containing many experiments by the author. Currently, it only supports AzureOpenAI. We welcome contributions and ideas from the community to help expand and improve this project.
+
 ## Features
 
 - 🌍 **Global Scale, Zero Maintenance**
@@ -69,6 +71,8 @@ Malacca offers a flexible architecture, allowing users to:
 - Add custom middleware to suit specific needs.
 - Extend or modify existing features.
 - Integrate additional upstream AI API services.
+
+You can just clone and modify the code then `wrangler deploy` to deploy your code globally.
 
 ## Contact
 

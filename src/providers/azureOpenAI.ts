@@ -3,7 +3,7 @@ import { AIProvider, AIRequestParams } from '../types';
 import { generateCacheKey } from '../utils/cache';
 import { recordAnalytics } from '../utils/analytics';
 
-const BasePath = '/azure-openai/:resource_name/:deployment_name';
+const BasePath = '/azure-openai/:resource_name/deployments/:deployment_name';
 const ProviderName = 'azure-openai';
 
 const azureOpenAIRoute = new Hono();
@@ -11,7 +11,7 @@ const azureOpenAIRoute = new Hono();
 azureOpenAIRoute.post('/*', async (c) => {
     const resourceName = c.req.param('resource_name') || '';
     const deploymentName = c.req.param('deployment_name') || '';
-    const functionName = c.req.path.slice(`/azure-openai/${resourceName}/${deploymentName}/`.length);
+    const functionName = c.req.path.slice(`/azure-openai/${resourceName}/deployments/${deploymentName}/`.length);
 
     const params: AIRequestParams = { resourceName, deploymentName, functionName };
     return azureOpenAIProvider.handleRequest(c, params);
@@ -87,7 +87,9 @@ export const azureOpenAIProvider: AIProvider = {
             const duration = Date.now() - startTime;
             recordAnalytics(c, ProviderName, duration, prompt_tokens, completion_tokens);
 
-            c.executionCtx.waitUntil(c.env.MALACCA_CACHE.put(cacheKeyHex, buf));
+            if (response.status === 200) {
+                c.executionCtx.waitUntil(c.env.MALACCA_CACHE.put(cacheKeyHex, buf));
+            }
             await writer.close();
         })();
 
