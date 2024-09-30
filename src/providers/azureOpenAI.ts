@@ -29,6 +29,7 @@ export const azureOpenAIProvider: AIProvider = {
         const queryParams = new URLSearchParams(c.req.query()).toString();
         const urlWithQueryParams = `${azureEndpoint}?${queryParams}`;
 
+        console.log({request_body: body})
         const apiKey = c.req.header('api-key');
         const realKey = await c.env.MALACCA_USER.get(apiKey);
         if (!realKey) {
@@ -86,7 +87,7 @@ export const azureOpenAIProvider: AIProvider = {
 
             const duration = Date.now() - startTime;
             recordAnalytics(c, ProviderName, duration, prompt_tokens, completion_tokens);
-
+            console.log({response_body: buf})
             if (response.status === 200) {
                 c.executionCtx.waitUntil(c.env.MALACCA_CACHE.put(cacheKeyHex, buf, {expirationTtl: 3600}));
             }
