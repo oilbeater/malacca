@@ -64,6 +64,14 @@ It is written in **TypeScript**: ensuring adaptability to the rapidly evolving A
 
    Then you can visit Malacca with the Worker domain or custom domain.
 
+### How to use?
+
+- [Virtual Key](./docs/virtual-key.md)
+- [Azure OpenAI](./docs/azure_openai.md)
+- [Caching](./docs/caching.md)
+- [Logging](./docs/logging.md)
+- [Metrics](./docs/metrics.md)
+
 ## Customization and Extension
 
 Malacca offers a flexible architecture, allowing users to:
