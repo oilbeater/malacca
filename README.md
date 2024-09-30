@@ -23,8 +23,6 @@ It is written in **TypeScript**: ensuring adaptability to the rapidly evolving A
 
 ## Quick Start
 
-[![Deploy to Cloudflare Workers](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/oilbeater/malacca)
-
 ### Prerequisites
 
 - A **Cloudflare** account.
@@ -47,13 +45,22 @@ It is written in **TypeScript**: ensuring adaptability to the rapidly evolving A
 
 3. **Configure the Project**
 
-   Edit the `wrangler.toml` configuration file to include your Cloudflare account details and relevant settings.
+   Create KV Namespace for LLM Cache and Virtual Key
+   
+   ```bash
+   npx wrangler kv namespace create MALACCA_CACHE
+   npx wrangler kv namespace create MALACCA_USER
+   ```
+
+   Then edit the `wrangler.toml` configuration with the KV ids generated.
 
 4. **Deploy to Cloudflare Workers**
 
    ```bash
    npm run deploy
    ```
+
+   Then you can visit Malacca with the Worker domain or custom domain.
 
 ## Customization and Extension
 
