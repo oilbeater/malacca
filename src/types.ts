@@ -1,4 +1,4 @@
-import { Context } from 'hono';
+import { Context, Hono } from 'hono';
 
 export interface Bindings {
     MALACCA: AnalyticsEngineDataset,
@@ -6,15 +6,9 @@ export interface Bindings {
     MALACCA_CACHE: KVNamespace,
 }
 
-export interface AIRequestParams {
-    resourceName: string;
-    deploymentName: string;
-    functionName: string;
-}
-
 export interface AIProvider {
     name: string;
-    handleRequest: (c: Context, params: AIRequestParams) => Promise<Response>;
+    handleRequest: (c: Context) => Promise<Response>;
     basePath: string;
-    route: any;
+    route: Hono;
 }

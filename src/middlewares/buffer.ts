@@ -1,6 +1,6 @@
-import { Context, MiddlewareHandler } from 'hono'
+import { Context, MiddlewareHandler, Next } from 'hono'
 
-export const bufferMiddleware: MiddlewareHandler = async (c, next) => {
+export const bufferMiddleware: MiddlewareHandler = async (c: Context, next: Next) => {
   let buffer = ''
   let resolveBuffer!: () => void
   const bufferPromise = new Promise<void>((resolve) => {

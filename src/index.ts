@@ -6,7 +6,7 @@ const app = new Hono<{ Bindings: Bindings }>();
 
 app.get('/', (c) => c.text('Welcome to Malacca!'));
 
-Object.entries(providers).forEach(([name, provider]) => {
+Object.entries(providers).forEach(([_, provider]) => {
   app.route(provider.basePath, provider.route);
 });
 
