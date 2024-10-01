@@ -1,15 +1,18 @@
 import { Hono, Context } from 'hono';
 import { AIProvider, AIRequestParams } from '../types';
 import { generateCacheKey } from '../utils/cache';
-import { recordAnalytics, timingMiddleware } from '../utils/analytics';
+import { metricsMiddleware } from '../utils/analytics';
 import { bufferMiddleware } from '../utils/buffer';
+import { loggingMiddleware } from '../utils/logging';
+
 const BasePath = '/azure-openai/:resource_name/deployments/:deployment_name';
 const ProviderName = 'azure-openai';
-
 const azureOpenAIRoute = new Hono();
 
-azureOpenAIRoute.use(bufferMiddleware, timingMiddleware);
-azureOpenAIRoute.post('/*', async (c) => {
+azureOpenAIRoute.use(bufferMiddleware, metricsMiddleware, loggingMiddleware);
+
+azureOpenAIRoute.post('/*', async (c: Context) => {
+    c.set('endpoint', ProviderName);
     const resourceName = c.req.param('resource_name') || '';
     const deploymentName = c.req.param('deployment_name') || '';
     const functionName = c.req.path.slice(`/azure-openai/${resourceName}/deployments/${deploymentName}/`.length);
@@ -59,10 +62,7 @@ export const azureOpenAIProvider: AIProvider = {
             return c.text('Internal Server Error', 500);
         }
 
-        const startTime = Date.now();
         let buf = '';
-        let prompt_tokens = 0;
-        let completion_tokens = 0;
 
         (async () => {
             const decoder = new TextDecoder('utf-8');
@@ -74,21 +74,7 @@ export const azureOpenAIProvider: AIProvider = {
             }
 
             if (response.status === 200) {
-                if (response.headers.get('content-type') === 'application/json') {
-                    const usage = JSON.parse(buf)['usage'];
-                    if (usage) {
-                        prompt_tokens = usage['prompt_tokens'] | 0;
-                        completion_tokens = usage['completion_tokens'] | 0;
-                    }
-                } else {
-                    completion_tokens = buf.split('\n\n').length - 1;
-                }
-            }
-
-            const duration = Date.now() - startTime;
-            recordAnalytics(c, ProviderName, duration, prompt_tokens, completion_tokens);
-            if (response.status === 200) {
-                c.executionCtx.waitUntil(c.env.MALACCA_CACHE.put(cacheKeyHex, buf, {expirationTtl: 3600}));
+                c.executionCtx.waitUntil(c.env.MALACCA_CACHE.put(cacheKeyHex, buf, { expirationTtl: 3600 }));
             }
             await writer.close();
         })();

@@ -15,7 +15,11 @@ export const bufferMiddleware: MiddlewareHandler = async (c, next) => {
   const writer = writable.getWriter();
   c.executionCtx.waitUntil((async () => {
     const reader = originalResponse.body?.getReader();
-    if (!reader) return;
+    if (!reader) {
+      c.set('buffer', buffer);
+      resolveBuffer();
+      return;
+    }
 
     try {
       while (true) {
@@ -26,7 +30,7 @@ export const bufferMiddleware: MiddlewareHandler = async (c, next) => {
         await writer.write(value);
       }
     } finally {
-      c.set('buffer', buffer)
+      c.set('buffer', buffer);
       resolveBuffer();
       await writer.close();
     }
