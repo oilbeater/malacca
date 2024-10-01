@@ -49,7 +49,7 @@ describe('Test Cache', () => {
     "stream": ${stream}
   }`;
 
-	it('with cache first response should with header malacca-cache-status: miss and following response with hit', async () => {
+	it('with cache first response should with no header malacca-cache-status and following response with hit', async () => {
 		const body = createRequestBody(false);
     let start = Date.now();
     let response = await SELF.fetch(url, { method: 'POST', body: body, headers: { 'Content-Type': 'application/json', 'api-key': 'oilbeater' } });
@@ -58,7 +58,7 @@ describe('Test Cache', () => {
 
     expect(response.status).toBe(200);
     expect(response.headers.get('content-type')).toContain('application/json');
-    expect(response.headers.get('malacca-cache-status')).toBe('miss');
+    expect(response.headers.get('malacca-cache-status')).toBeNull();
 
     start = Date.now();
     response = await SELF.fetch(url, {method: 'POST', body: body, headers: {'Content-Type': 'application/json', 'api-key': 'oilbeater'}});
@@ -80,7 +80,7 @@ describe('Test Cache', () => {
 
     expect(response.status).toBe(200);
     expect(response.headers.get('content-type')).toContain('text/event-stream');
-    expect(response.headers.get('malacca-cache-status')).toBe('miss');
+    expect(response.headers.get('malacca-cache-status')).toBeNull();
 
     start = Date.now();
     response = await SELF.fetch(url, {method: 'POST', body: body, headers: {'Content-Type': 'application/json', 'api-key': 'oilbeater'}});
@@ -110,7 +110,7 @@ describe('Test Cache', () => {
     });
 
     expect(response.status).not.toBe(200);
-    expect(response.headers.get('malacca-cache-status')).toBe('miss');
+    expect(response.headers.get('malacca-cache-status')).toBeNull();
 
     // Second request with the same invalid body
     response = await SELF.fetch(url, {
@@ -121,6 +121,6 @@ describe('Test Cache', () => {
 
     expect(response.status).not.toBe(200);
     // Should still be a cache miss, as non-200 responses are not cached
-    expect(response.headers.get('malacca-cache-status')).toBe('miss');
+    expect(response.headers.get('malacca-cache-status')).toBeNull();
   });
 });
