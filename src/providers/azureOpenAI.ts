@@ -1,4 +1,4 @@
-import { Hono, Context } from 'hono';
+import { Hono, Context, Next } from 'hono';
 import { AIProvider } from '../types';
 import {
     cacheMiddleware,
@@ -12,10 +12,15 @@ const BasePath = '/azure-openai/:resource_name/deployments/:deployment_name';
 const ProviderName = 'azure-openai';
 const azureOpenAIRoute = new Hono();
 
-azureOpenAIRoute.use(bufferMiddleware, metricsMiddleware, loggingMiddleware, virtualKeyMiddleware, cacheMiddleware);
+const initMiddleware = async (c: Context, next: Next) => {
+    c.set('endpoint', ProviderName);
+    await next();
+};
+
+
+azureOpenAIRoute.use(initMiddleware, bufferMiddleware, metricsMiddleware, loggingMiddleware, virtualKeyMiddleware, cacheMiddleware);
 
 azureOpenAIRoute.post('/*', async (c: Context) => {
-    c.set('endpoint', ProviderName);
     return azureOpenAIProvider.handleRequest(c);
 });
 

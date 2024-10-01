@@ -1,6 +1,10 @@
-import { Context, Next } from "hono";
+import { Context, MiddlewareHandler, Next } from "hono";
 
-export async function generateCacheKey(urlWithQueryParams: string, body: any): Promise<string> {
+interface Env {
+  MALACCA_CACHE: KVNamespace;
+}
+
+export async function generateCacheKey(urlWithQueryParams: string, body: string): Promise<string> {
   const cacheKey = await crypto.subtle.digest(
     'SHA-256',
     new TextEncoder().encode(urlWithQueryParams + JSON.stringify(body))
@@ -10,12 +14,13 @@ export async function generateCacheKey(urlWithQueryParams: string, body: any): P
     .join('');
 }
 
-export const cacheMiddleware = async (c: Context, next: Next) => {
+export const cacheMiddleware: MiddlewareHandler = async (c: Context, next: Next) => {
   const cacheKeyHex = await generateCacheKey(c.req.url, await c.req.text());
-  const responseFromCache = await c.env.MALACCA_CACHE.get(cacheKeyHex, "stream");
-
-  if (responseFromCache) {
-    return new Response(responseFromCache, { headers: { 'malacca-cache-status': 'hit' } });
+  const response = await c.env.MALACCA_CACHE.get(cacheKeyHex, "stream");
+  if (response) {
+    const { _, metadata } = await c.env.MALACCA_CACHE.getWithMetadata(cacheKeyHex, "stream");
+    const contentType = metadata['contentType'] || 'application/octet-stream';
+    return new Response(response, { headers: { 'malacca-cache-status': 'hit', 'content-type': contentType } });
   }
 
   await next();
@@ -23,7 +28,8 @@ export const cacheMiddleware = async (c: Context, next: Next) => {
   if (c.res.status === 200) {
     c.executionCtx.waitUntil((async () => {
       await c.get('bufferPromise');
-      c.executionCtx.waitUntil(c.env.MALACCA_CACHE.put(cacheKeyHex, c.get('buffer'), { expirationTtl: 3600 }));
+      const contentType = c.res.headers.get('content-type');
+      c.executionCtx.waitUntil(c.env.MALACCA_CACHE.put(cacheKeyHex, c.get('buffer'), { expirationTtl: 3600, metadata: { 'contentType': contentType } }));
     })());
   }
 };

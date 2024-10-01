@@ -9,7 +9,7 @@ declare module "cloudflare:test" {
 
 beforeAll(async () => {
   // Set up Cloudflare KV
-  await env.MALACCA_USER.put('oilbeater', import.meta.env.VITE_AZURE_API_KEY);
+  await env.MALACCA_USER.put('oilbeater', import.meta.env.VITE_AZURE_API_KEY, { metadata: { 'contentType': 'application/json' } });
 });
 
 describe('Welcome to Malacca worker', () => {
@@ -67,6 +67,7 @@ describe('Test Cache', () => {
 
     expect(response.status).toBe(200);
     expect(response.headers.get('malacca-cache-status')).toBe('hit');
+    expect(response.headers.get('content-type')).toBe('application/json');
     expect(value).toEqual(cacheValue)
     expect(duration / 2).toBeGreaterThan(cacheDuration)
   });
@@ -89,6 +90,7 @@ describe('Test Cache', () => {
 
     expect(response.status).toBe(200);
     expect(response.headers.get('malacca-cache-status')).toBe('hit');
+    expect(response.headers.get('content-type')).toContain('text/event-stream');
     expect(value).toEqual(cacheValue)
     expect(duration / 2).toBeGreaterThan(cacheDuration)
   });
