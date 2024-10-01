@@ -1,10 +1,12 @@
 import { Hono, Context } from 'hono';
 import { AIProvider } from '../types';
-import { cacheMiddleware } from '../middlewares/cache';
-import { metricsMiddleware } from '../middlewares/analytics';
-import { bufferMiddleware } from '../middlewares/buffer';
-import { loggingMiddleware } from '../middlewares/logging';
-import { virtualKeyMiddleware } from '../middlewares/virtualKey';
+import {
+    cacheMiddleware,
+    metricsMiddleware,
+    bufferMiddleware,
+    loggingMiddleware,
+    virtualKeyMiddleware
+} from '../middlewares';
 
 const BasePath = '/azure-openai/:resource_name/deployments/:deployment_name';
 const ProviderName = 'azure-openai';
