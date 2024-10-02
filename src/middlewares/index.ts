@@ -6,10 +6,9 @@ export { bufferMiddleware } from './buffer';
 export { loggingMiddleware } from './logging';
 export { virtualKeyMiddleware } from './virtualKey';
 export { rateLimiterMiddleware } from './rateLimiter';
-import { Bindings } from '../types';
 
 export type AppContext = {
-    Bindings: Bindings,
+    Bindings: Env,
     Variables: {
         endpoint: string,
         'malacca-cache-status': string,

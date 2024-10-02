@@ -1,8 +1,7 @@
 import { Hono } from 'hono';
 import { providers } from './providers';
-import { Bindings } from './types';
 
-const app = new Hono<{ Bindings: Bindings }>();
+const app = new Hono<{ Bindings: Env }>();
 
 app.get('/', (c) => c.text('Welcome to Malacca!'));
 
