@@ -4,6 +4,7 @@ export interface Bindings {
     MALACCA: AnalyticsEngineDataset,
     MALACCA_USER: KVNamespace,
     MALACCA_CACHE: KVNamespace,
+    MY_RATE_LIMITER: RateLimit,
 }
 
 export interface AIProvider {
