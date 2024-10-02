@@ -77,5 +77,5 @@ function getModelName(c: Context): string {
             }
         }
     }
-    return ""
+    return "unknown"
 }
