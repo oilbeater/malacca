@@ -9,6 +9,7 @@ export interface Bindings {
 export interface AIProvider {
     name: string;
     handleRequest: (c: Context) => Promise<Response>;
+    getModelName: (c: Context) => string;
     basePath: string;
     route: Hono;
 }

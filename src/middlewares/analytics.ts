@@ -8,10 +8,12 @@ export function recordAnalytics(
   completion_tokens: number
 ) {
   if (c.env.MALACCA) {
+    const getModelName = c.get('getModelName');
+    const modelName = typeof getModelName === 'function' ? getModelName(c) : 'unknown';
     c.env.MALACCA.writeDataPoint({
-      'blobs': [endpoint, c.req.path, c.res.status],
+      'blobs': [endpoint, c.req.path, c.res.status, c.get('malacca-cache-status') || 'miss', modelName],
       'doubles': [duration, prompt_tokens, completion_tokens],
-      'indexes': ['azure'],
+      'indexes': [endpoint],
     });
   }
 }
