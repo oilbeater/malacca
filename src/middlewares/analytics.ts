@@ -1,7 +1,8 @@
-import { Context, MiddlewareHandler } from 'hono';
+import { Context, MiddlewareHandler, Next } from 'hono';
+import { AppContext } from './index';
 
 export function recordAnalytics(
-  c: Context,
+  c: Context<AppContext>,
   endpoint: string,
   duration: number,
 ) {
@@ -16,20 +17,20 @@ export function recordAnalytics(
 
   if (c.env.MALACCA) {
     c.env.MALACCA.writeDataPoint({
-      'blobs': [endpoint, c.req.path, c.res.status, c.get('malacca-cache-status') || 'miss', modelName],
+      'blobs': [endpoint, c.req.path, c.res.status.toString(), c.get('malacca-cache-status') || 'miss', modelName],
       'doubles': [duration, input_tokens, output_tokens],
       'indexes': [endpoint],
     });
   }
 }
 
-export const metricsMiddleware: MiddlewareHandler = async (c, next) => {
+export const metricsMiddleware: MiddlewareHandler = async (c: Context<AppContext>, next: Next) => {
   const startTime = Date.now();
-
+  c.env.MALACCA
   await next();
 
   c.executionCtx.waitUntil((async () => {
-    await c.get('bufferPromise')
+    await c.get('bufferPromise');
     const endTime = Date.now();
     const duration = endTime - startTime;
     const endpoint = c.get('endpoint') || 'unknown';

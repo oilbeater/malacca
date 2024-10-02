@@ -1,8 +1,5 @@
 import { Context, MiddlewareHandler, Next } from "hono";
-
-interface Env {
-  MALACCA_CACHE: KVNamespace;
-}
+import { AppContext } from './index';
 
 export async function generateCacheKey(urlWithQueryParams: string, body: string): Promise<string> {
   const cacheKey = await crypto.subtle.digest(
@@ -14,13 +11,14 @@ export async function generateCacheKey(urlWithQueryParams: string, body: string)
     .join('');
 }
 
-export const cacheMiddleware: MiddlewareHandler = async (c: Context, next: Next) => {
+export const cacheMiddleware: MiddlewareHandler = async (c: Context<AppContext>, next: Next) => {
   const cacheKeyHex = await generateCacheKey(c.req.url, await c.req.text());
   const response = await c.env.MALACCA_CACHE.get(cacheKeyHex, "stream");
   if (response) {
     const { _, metadata } = await c.env.MALACCA_CACHE.getWithMetadata(cacheKeyHex, "stream");
     const contentType = metadata['contentType'] || 'application/octet-stream';
     c.set('malacca-cache-status', 'hit');
+    console.log(contentType);
     return new Response(response, { headers: { 'malacca-cache-status': 'hit', 'content-type': contentType } });
   }
 

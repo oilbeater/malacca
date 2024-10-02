@@ -1,7 +1,8 @@
 import { Context, Next } from "hono";
+import { AppContext } from './index';
 
-export const virtualKeyMiddleware = async (c: Context, next: Next) => {
-    const apiKey = c.req.header('api-key');
+export const virtualKeyMiddleware = async (c: Context<AppContext>, next: Next) => {
+    const apiKey = c.req.header('api-key') || '';
     const realKey = await c.env.MALACCA_USER.get(apiKey);
     if (!realKey) {
         return c.text('Unauthorized', 401);

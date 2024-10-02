@@ -1,4 +1,5 @@
 import { Context, MiddlewareHandler, Next } from 'hono'
+import { AppContext } from './index';
 
 export const bufferMiddleware: MiddlewareHandler = async (c: Context, next: Next) => {
   let buffer = ''

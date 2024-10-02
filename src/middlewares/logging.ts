@@ -1,6 +1,7 @@
 import { Context, Next } from 'hono';
+import { AppContext } from './index';
 
-export const loggingMiddleware = async (c: Context, next: Next) => {
+export const loggingMiddleware = async (c: Context<AppContext>, next: Next) => {
     await next();
 
     // Log request and response
