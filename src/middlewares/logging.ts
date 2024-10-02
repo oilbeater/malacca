@@ -5,7 +5,7 @@ export const loggingMiddleware = async (c: Context, next: Next) => {
 
     // Log request and response
     c.executionCtx.waitUntil((async () => {
-        const requestBody = await c.req.text().catch(() => ({}));
+        const requestBody = c.get('reqBuffer') || '';
         console.log('Request:', {
             body: requestBody,
         });

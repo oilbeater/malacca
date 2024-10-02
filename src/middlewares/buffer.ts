@@ -8,6 +8,9 @@ export const bufferMiddleware: MiddlewareHandler = async (c: Context, next: Next
   })
   c.set('bufferPromise', bufferPromise)
 
+  const reqBuffer: string = await c.req.text() || ''
+  c.set('reqBuffer', reqBuffer)
+  
   await next()
 
   const originalResponse = c.res
