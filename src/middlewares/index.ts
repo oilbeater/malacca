@@ -6,7 +6,7 @@ export { bufferMiddleware } from './buffer';
 export { loggingMiddleware } from './logging';
 export { virtualKeyMiddleware } from './virtualKey';
 export { rateLimiterMiddleware } from './rateLimiter';
-
+export { guardMiddleware } from './guard';
 export type AppContext = {
     Bindings: Env,
     Variables: {

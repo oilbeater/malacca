@@ -20,7 +20,7 @@ describe('Welcome to Malacca worker', () => {
 });
 
 const url = `https://example.com/azure-openai/${import.meta.env.VITE_AZURE_RESOURCE_NAME}/deployments/${import.meta.env.VITE_AZURE_DEPLOYMENT_NAME}/chat/completions?api-version=2024-07-01-preview`;
-const createRequestBody = (stream: boolean) => `
+const createRequestBody = (stream: boolean, placeholder: string) => `
 {
   "messages": [
     {
@@ -37,7 +37,7 @@ const createRequestBody = (stream: boolean) => `
       "content": [
         {
           "type": "text",
-          "text": "Tell me a very short story about Malacca"
+          "text": "Tell me a very short story about ${placeholder}"
         }
       ]
     }
@@ -50,7 +50,7 @@ const createRequestBody = (stream: boolean) => `
 
 describe('Test Cache', () => {
   it('with cache first response should with no header malacca-cache-status and following response with hit', async () => {
-    const body = createRequestBody(false);
+    const body = createRequestBody(false, 'Malacca');
     let start = Date.now();
     let response = await SELF.fetch(url, { method: 'POST', body: body, headers: { 'Content-Type': 'application/json', 'api-key': 'oilbeater' } });
     const value = await response.json()
@@ -73,7 +73,7 @@ describe('Test Cache', () => {
   });
 
   it('Test stream with cache', async () => {
-    const body = createRequestBody(true);
+    const body = createRequestBody(true, 'Malacca');
     let start = Date.now();
     let response = await SELF.fetch(url, { method: 'POST', body: body, headers: { 'Content-Type': 'application/json', 'api-key': 'oilbeater' } });
     const value = await response.text()
@@ -131,10 +131,24 @@ describe('Test Virtual Key', () => {
   it('should return 401 for invalid api key', async () => {
     const response = await SELF.fetch(url, {
       method: 'POST',
-      body: createRequestBody(true),
+      body: createRequestBody(true, 'Malacca'),
       headers: { 'Content-Type': 'application/json', 'api-key': 'invalid-key' }
     });
 
     expect(response.status).toBe(401);
   });
 });
+
+describe('Test Guard', () => {
+  it('should return 403 for deny request', async () => {
+    const response = await SELF.fetch(url, {
+      method: 'POST',
+      body: createRequestBody(true, 'password'),
+      headers: { 'Content-Type': 'application/json', 'api-key': 'oilbeater' }
+    }); 
+
+    expect(response.status).toBe(403);
+  });
+});
+
+
