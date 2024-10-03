@@ -7,7 +7,7 @@ export { loggingMiddleware } from './logging';
 export { virtualKeyMiddleware } from './virtualKey';
 export { rateLimiterMiddleware } from './rateLimiter';
 export { guardMiddleware } from './guard';
-export type AppContext = {
+export interface AppContext {
     Bindings: Env,
     Variables: {
         endpoint: string,

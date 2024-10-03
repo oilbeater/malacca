@@ -1,5 +1,5 @@
 import { Context, MiddlewareHandler, Next } from "hono";
-import { AppContext } from './index';
+import { AppContext } from '.';
 
 export async function generateCacheKey(urlWithQueryParams: string, body: string): Promise<string> {
   const cacheKey = await crypto.subtle.digest(

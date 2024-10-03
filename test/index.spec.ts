@@ -13,7 +13,7 @@ beforeAll(async () => {
 });
 
 describe('Welcome to Malacca worker', () => {
-  it('responds with Welcome to Malacca! (integration style)', async () => {
+  it('responds with Welcome to Malacca!', async () => {
     const response = await SELF.fetch('https://example.com');
     expect(await response.text()).toMatchInlineSnapshot(`"Welcome to Malacca!"`);
   });
@@ -145,10 +145,8 @@ describe('Test Guard', () => {
       method: 'POST',
       body: createRequestBody(true, 'password'),
       headers: { 'Content-Type': 'application/json', 'api-key': 'oilbeater' }
-    }); 
+    });
 
     expect(response.status).toBe(403);
   });
 });
-
-

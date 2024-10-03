@@ -1,5 +1,5 @@
 import { Context, MiddlewareHandler, Next } from 'hono';
-import { AppContext } from './index';
+import { AppContext } from '.';
 
 export function recordAnalytics(
   c: Context<AppContext>,
@@ -26,7 +26,6 @@ export function recordAnalytics(
 
 export const metricsMiddleware: MiddlewareHandler = async (c: Context<AppContext>, next: Next) => {
   const startTime = Date.now();
-  c.env.MALACCA
   await next();
 
   c.executionCtx.waitUntil((async () => {

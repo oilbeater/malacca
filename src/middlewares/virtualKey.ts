@@ -1,5 +1,5 @@
 import { Context, Next } from "hono";
-import { AppContext } from './index';
+import { AppContext } from '.';
 
 export const virtualKeyMiddleware = async (c: Context<AppContext>, next: Next) => {
     const apiKey = c.req.header('api-key') || '';

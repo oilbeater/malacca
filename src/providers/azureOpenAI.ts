@@ -75,7 +75,8 @@ function getModelName(c: Context): string {
                         if (jsonData.model != "") {
                             return jsonData.model;
                         }
-                    } catch (error) {
+                    } catch {
+                        continue;
                     }
                 }
             }
