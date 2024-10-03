@@ -6,7 +6,7 @@ It is fully **CloudFlare Native**: allowing for global scale deployment without 
 
 It is written in **TypeScript**: ensuring adaptability to the rapidly evolving AI ecosystem and catering to the diverse needs of application developers.
 
-> Malacca is still an early-stage project, containing many experiments by the author. Currently, it only supports AzureOpenAI. We welcome contributions and ideas from the community to help expand and improve this project.
+> Malacca is still an early-stage project, containing many experiments by the author. Currently, it only supports AzureOpenAI. While Malacca provides numerous features, its primary purpose is to offer a framework and examples to help users better implement their own custom functionalities. We encourage you to read the code and adapt it to your specific needs. We welcome contributions and ideas from the community to help expand and improve this project.
 
 ## Features
 
@@ -19,7 +19,7 @@ It is written in **TypeScript**: ensuring adaptability to the rapidly evolving A
 - 🛠️ **Comprehensive Feature Set**
   - 🔑 **Virtual Key**: Manage access permissions using virtual keys, providing more granular control over API access.
   - ⚡ **Caching**: Reduce latency and costs by caching repeat requests.
-  - 📊 **Token Usage Monitoring**: Track the usage of tokens in real time, allowing you to understand and manage API costs.
+  - 📊 **Analytics**: Track the status, error, latency and usage of tokens, allowing you to understand and manage API costs.
   - 📋 **Logging**: Record requests and responses to further fine-tune or reinforcement learning.
   - 🚦 **Rate Limiting**: Protect upstream API resources by controlling request rates.
 
