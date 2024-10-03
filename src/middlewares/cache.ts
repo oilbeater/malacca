@@ -15,8 +15,8 @@ export const cacheMiddleware: MiddlewareHandler = async (c: Context<AppContext>,
   const cacheKeyHex = await generateCacheKey(c.req.url, await c.req.text());
   const response = await c.env.MALACCA_CACHE.get(cacheKeyHex, "stream");
   if (response) {
-    const { _, metadata } = await c.env.MALACCA_CACHE.getWithMetadata(cacheKeyHex, "stream");
-    const contentType = metadata['contentType'] || 'application/octet-stream';
+    const { value: _value, metadata } = await c.env.MALACCA_CACHE.getWithMetadata(cacheKeyHex, "stream");
+    const contentType = (metadata as Record<string, string>)['contentType'] || 'application/octet-stream';
     c.set('malacca-cache-status', 'hit');
     return new Response(response, { headers: { 'malacca-cache-status': 'hit', 'content-type': contentType } });
   }
