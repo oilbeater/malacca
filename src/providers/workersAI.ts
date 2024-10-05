@@ -17,8 +17,10 @@ export const workersAIProvider: AIProvider = {
     handleRequest: async (c: Context<{ Bindings: Env }>) => {
         const response = await c.env.AI.run("@cf/meta/llama-3.1-8b-instruct",
             await c.req.json());
-      
-          return new Response(JSON.stringify(response));
+        if (response instanceof ReadableStream) {
+            return new Response(response);
+        }
+        return new Response(response.response);
     }
 };
 
