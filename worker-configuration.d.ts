@@ -5,4 +5,5 @@ interface Env {
 	MALACCA_CACHE: KVNamespace;
 	MALACCA: AnalyticsEngineDataset;
 	MY_RATE_LIMITER: RateLimit;
+	AI: Ai;
 }
