@@ -7,7 +7,8 @@ import {
     loggingMiddleware,
     virtualKeyMiddleware,
     rateLimiterMiddleware,
-    guardMiddleware
+    guardMiddleware,
+    fallbackMiddleware
 } from '../middlewares';
 
 const BasePath = '/azure-openai/:resource_name/deployments/:deployment_name';
@@ -22,7 +23,7 @@ const initMiddleware = async (c: Context, next: Next) => {
 };
 
 
-azureOpenAIRoute.use(initMiddleware, metricsMiddleware, loggingMiddleware, bufferMiddleware, virtualKeyMiddleware, rateLimiterMiddleware, guardMiddleware, cacheMiddleware);
+azureOpenAIRoute.use(initMiddleware, metricsMiddleware, loggingMiddleware, bufferMiddleware, virtualKeyMiddleware, rateLimiterMiddleware, guardMiddleware, cacheMiddleware, fallbackMiddleware);
 
 azureOpenAIRoute.post('/*', async (c: Context) => {
     return azureOpenAIProvider.handleRequest(c);

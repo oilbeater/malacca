@@ -1,3 +1,5 @@
+# Malacca
+
 ![Malacca Logo](./docs/malacca.jpg)
 
 **Malacca** is an open-source AI gateway designed to become the central hub in the world of AI.
