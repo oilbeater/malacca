@@ -126,3 +126,5 @@ The log entry looks like this:
   "id": 0
 }
 ```
+
+You can customize the logging logic by modifying the logging middleware in `src/middlewares/logging.ts`.

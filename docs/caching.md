@@ -16,3 +16,5 @@ For cached response there will be a header in the response:
 ```bash
 malacca-cache-status: hit
 ```
+
+You can customize the cache logic by modifying the cache middleware in `src/middlewares/cache.ts`.

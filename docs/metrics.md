@@ -60,3 +60,5 @@ Response:
   "rows_before_limit_at_least": 1
 }
 ```
+
+You can customize the metrics logic by modifying the metrics middleware in `src/middlewares/metrics.ts`.

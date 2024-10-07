@@ -28,3 +28,5 @@ Virtual Key is implemented by Cloudflare Worker KV, you can easily add a delete 
     ```
 
 You can also manage the KV pairs directly from Cloudflare Worker KV web console.
+
+You can customize the virtual key logic by modifying the virtual key middleware in `src/middlewares/virtualKey.ts`.
