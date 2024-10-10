@@ -73,7 +73,7 @@ It is written in **TypeScript**: ensuring adaptability to the rapidly evolving A
 - [Azure OpenAI](./docs/azure_openai.md)
 - [Virtual Key](./docs/virtual-key.md)
 - [Caching](./docs/caching.md)
-- [Guard](./docs/guard.md)
+- [Guard](./docs/guards.md)
 - [Logging](./docs/logging.md)
 - [Metrics](./docs/metrics.md)
 - [Rate Limiting](./docs/rate-limiting.md)
