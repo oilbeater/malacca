@@ -22,7 +22,6 @@ const initMiddleware = async (c: Context, next: Next) => {
     await next();
 };
 
-
 azureOpenAIRoute.use(initMiddleware, metricsMiddleware, loggingMiddleware, bufferMiddleware, virtualKeyMiddleware, rateLimiterMiddleware, guardMiddleware, cacheMiddleware, fallbackMiddleware);
 
 azureOpenAIRoute.post('/*', async (c: Context) => {

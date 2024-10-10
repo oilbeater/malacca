@@ -17,7 +17,7 @@ export const workersAIProvider: AIProvider = {
     handleRequest: async (c: Context<{ Bindings: Env }>) => {
         const provider = c.req.param('provider');
         const repo = c.req.param('repo');
-        const model = c.req.param('model')
+        const model = c.req.param('model');
         const response = await c.env.AI.run(`${provider}/${repo}/${model}`,
             await c.req.json());
 
@@ -30,7 +30,10 @@ export const workersAIProvider: AIProvider = {
 };
 
 function getModelName(c: Context) {
-    return "workers-ai";
+    const provider = c.req.param('provider');
+    const repo = c.req.param('repo');
+    const model = c.req.param('model');
+    return `${provider}/${repo}/${model}`;
 }
 
 function getTokenCount(c: Context) {
