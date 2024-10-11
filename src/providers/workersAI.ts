@@ -15,10 +15,8 @@ export const workersAIProvider: AIProvider = {
     getModelName: getModelName,
     getTokenCount: getTokenCount,
     handleRequest: async (c: Context<{ Bindings: Env }>) => {
-        const provider = c.req.param('provider');
-        const repo = c.req.param('repo');
-        const model = c.req.param('model');
-        const response = await c.env.AI.run(`${provider}/${repo}/${model}`,
+        const model = getModelName(c);
+        const response = await c.env.AI.run(`${model}`,
             await c.req.json());
 
         if (response instanceof ReadableStream) {
