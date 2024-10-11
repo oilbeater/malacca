@@ -37,3 +37,7 @@ function getModelName(c: Context) {
 function getTokenCount(c: Context) {
     return { input_tokens: 0, output_tokens: 0 };
 }
+
+function getVirtualKey(c: Context) {
+    return '';
+}

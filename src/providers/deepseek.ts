@@ -19,8 +19,21 @@ const initMiddleware = async (c: Context, next: Next) => {
     c.set('endpoint', ProviderName);
     c.set('getModelName', getModelName);
     c.set('getTokenCount', getTokenCount);
+    c.set('getVirtualKey', getVirtualKey);
     await next();
 };
+
+deepseekRoute.use(
+    initMiddleware,
+    metricsMiddleware,
+    loggingMiddleware,
+    bufferMiddleware,
+    virtualKeyMiddleware,
+    rateLimiterMiddleware,
+    guardMiddleware,
+    cacheMiddleware,
+    fallbackMiddleware
+);
 
 deepseekRoute.post('/*', async (c: Context) => {
     return deepseekProvider.handleRequest(c);
@@ -39,12 +52,19 @@ export const deepseekProvider: AIProvider = {
     handleRequest: async (c: Context) => {
         const functionName = c.req.path.slice(`/deepseek/`.length);
         const deepseekEndpoint = `https://api.deepseek.com/${functionName}`;
-        console.log(`DeepSeek endpoint: ${deepseekEndpoint}`);
+
+        const headers = new Headers(c.req.header());
+        if (c.get('middlewares')?.includes('virtualKey')) {
+            const apiKey: string = c.get('realKey');
+            if (apiKey) {
+                headers.set('Authorization', `Bearer ${apiKey}`);
+            }
+        }
 
         const response = await fetch(deepseekEndpoint, {
             method: c.req.method,
             body: JSON.stringify(await c.req.json()),
-            headers: c.req.header()
+            headers: headers
         });
 
         return response;
@@ -52,15 +72,17 @@ export const deepseekProvider: AIProvider = {
 };
 
 function getModelName(c: Context): string {
-    const model = c.req.param('model');
+    const body = c.get('reqBuffer') || '{}';
+    const model = JSON.parse(body).model;
     return model || "unknown";
 }
 
 function getTokenCount(c: Context): { input_tokens: number, output_tokens: number } {
     const buf = c.get('buffer') || "";
     if (c.res.status === 200) {
-        try {
-            const jsonResponse = JSON.parse(buf);
+        if (c.res.headers.get('content-type') === 'application/json') {
+            try {
+                const jsonResponse = JSON.parse(buf);
             const usage = jsonResponse.usage;
             if (usage) {
                 return {
@@ -69,8 +91,25 @@ function getTokenCount(c: Context): { input_tokens: number, output_tokens: numbe
                 };
             }
         } catch (error) {
-            console.error("Error parsing response:", error);
+                console.error("Error parsing response:", error);
+            }
         }
-    }
+        else {
+            const output = buf.trim().split('\n\n').at(-2);
+            if (output && output.startsWith('data: ')) {
+                const usage_message = JSON.parse(output.slice('data: '.length));
+                return {
+                    input_tokens: usage_message.usage.prompt_tokens || 0,
+                    output_tokens: usage_message.usage.completion_tokens || 0
+                };
+            }
+        }
+    } 
     return { input_tokens: 0, output_tokens: 0 };
 }
+
+function getVirtualKey(c: Context): string {
+    const authHeader = c.req.header('Authorization') || '';
+    return authHeader.startsWith('Bearer ') ? authHeader.slice(7) : '';
+}
+

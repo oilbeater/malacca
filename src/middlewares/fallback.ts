@@ -1,7 +1,8 @@
 import { Context, Next } from 'hono';
-import { AppContext } from '.';
+import { AppContext, setMiddlewares } from '.';
 
 export const fallbackMiddleware = async (c: Context<AppContext>, next: Next) => {
+    setMiddlewares(c, 'fallback');
     try {
         await next();
 

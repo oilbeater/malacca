@@ -1,5 +1,5 @@
 import { Context, MiddlewareHandler, Next } from "hono";
-import { AppContext } from '.';
+import { AppContext, setMiddlewares } from '.';
 
 export async function generateCacheKey(urlWithQueryParams: string, body: string): Promise<string> {
   const cacheKey = await crypto.subtle.digest(
@@ -12,6 +12,7 @@ export async function generateCacheKey(urlWithQueryParams: string, body: string)
 }
 
 export const cacheMiddleware: MiddlewareHandler = async (c: Context<AppContext>, next: Next) => {
+  setMiddlewares(c, 'cache');
   const cacheKeyHex = await generateCacheKey(c.req.url, await c.req.text());
   const response = await c.env.MALACCA_CACHE.get(cacheKeyHex, "stream");
   if (response) {

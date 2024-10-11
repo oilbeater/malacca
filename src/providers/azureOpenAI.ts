@@ -16,13 +16,29 @@ const ProviderName = 'azure-openai';
 const azureOpenAIRoute = new Hono();
 
 const initMiddleware = async (c: Context, next: Next) => {
+    if (!c.get('middlewares')) {
+        c.set('middlewares', ['init']);
+    } else {
+        c.set('middlewares', [...c.get('middlewares'), 'init']);
+    }
     c.set('endpoint', ProviderName);
     c.set('getModelName', getModelName);
     c.set('getTokenCount', getTokenCount);
+    c.set('getVirtualKey', getVirtualKey);
     await next();
 };
 
-azureOpenAIRoute.use(initMiddleware, metricsMiddleware, loggingMiddleware, bufferMiddleware, virtualKeyMiddleware, rateLimiterMiddleware, guardMiddleware, cacheMiddleware, fallbackMiddleware);
+azureOpenAIRoute.use(
+    initMiddleware,
+    metricsMiddleware,
+    loggingMiddleware,
+    bufferMiddleware,
+    virtualKeyMiddleware,
+    rateLimiterMiddleware,
+    guardMiddleware,
+    cacheMiddleware,
+    fallbackMiddleware
+);
 
 azureOpenAIRoute.post('/*', async (c: Context) => {
     return azureOpenAIProvider.handleRequest(c);
@@ -43,9 +59,11 @@ export const azureOpenAIProvider: AIProvider = {
         const urlWithQueryParams = `${azureEndpoint}?${queryParams}`;
 
         const headers = new Headers(c.req.header());
-        const apiKey: string = c.get('realKey');
-        if (apiKey) {
-            headers.set('api-key', apiKey);
+        if (c.get('middlewares')?.includes('virtualKey')) {
+            const apiKey: string = c.get('realKey');
+            if (apiKey) {
+                headers.set('api-key', apiKey);
+            }
         }
         const response = await fetch(urlWithQueryParams, {
             method: c.req.method,
@@ -107,4 +125,8 @@ function getTokenCount(c: Context): { input_tokens: number, output_tokens: numbe
         }
     }
     return { input_tokens: 0, output_tokens: 0 }
+}
+
+function getVirtualKey(c: Context): string {
+    return c.req.header('api-key') || '';
 }

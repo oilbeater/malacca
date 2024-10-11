@@ -1,7 +1,8 @@
 import { Context, Next } from "hono";
-import { AppContext } from '.';
+import { AppContext, setMiddlewares } from '.';
 
 export const rateLimiterMiddleware = async (c: Context<AppContext>, next: Next) => {
+    setMiddlewares(c, 'rateLimiter');
     const key = c.req.header('api-key') || '';
     const { success } = await c.env.MY_RATE_LIMITER.limit({ key: key })
     if (!success) {

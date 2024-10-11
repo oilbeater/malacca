@@ -1,5 +1,5 @@
 import { Context, MiddlewareHandler, Next } from "hono";
-import { AppContext } from ".";
+import { AppContext, setMiddlewares } from ".";
 
 const denyRequestPatterns = [
     'password',
@@ -13,6 +13,7 @@ const denyResponsePatterns = [
 // The guard middleware is used to protect the API by checking if the request match the specific regex. 
 // If so it returns message "Rejected due to inappropriate content" with 403 status code.
 export const guardMiddleware: MiddlewareHandler = async (c: Context<AppContext>, next: Next) => {
+    setMiddlewares(c, 'guard');
     const requestText = await c.req.text();
     if (denyRequestPatterns.some(pattern => new RegExp(pattern, 'i').test(requestText))) {
         return c.text('Rejected due to inappropriate content', 403);

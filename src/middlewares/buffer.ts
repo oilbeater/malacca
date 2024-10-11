@@ -1,7 +1,8 @@
 import { Context, MiddlewareHandler, Next } from 'hono'
-import { AppContext } from '.';
+import { AppContext, setMiddlewares } from '.';
 
 export const bufferMiddleware: MiddlewareHandler = async (c: Context<AppContext>, next: Next) => {
+  setMiddlewares(c, 'buffer');
   let buffer = ''
   let resolveBuffer!: () => void
   const bufferPromise = new Promise<void>((resolve) => {
