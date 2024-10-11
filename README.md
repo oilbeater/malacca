@@ -68,9 +68,13 @@ It is written in **TypeScript**: ensuring adaptability to the rapidly evolving A
 
    Then you can visit Malacca with the Worker domain or custom domain.
 
-### How to use?
+### Supported LLM Providers
 
 - [Azure OpenAI](./docs/azure_openai.md)
+- [DeepSeek](./docs/deepseek.md) 
+
+### How to use?
+
 - [Virtual Key](./docs/virtual-key.md)
 - [Caching](./docs/caching.md)
 - [Guard](./docs/guards.md)

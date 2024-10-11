@@ -1,6 +1,6 @@
-# Azure OpenAI Usage
+# Azure OpenAI
 
-To leverage the advanced features provided by Malacca while using the Azure OpenAI API, you only need to adjust the `base_url` configuration in their SDK. This simple change allows you to benefit from Malacca's capabilities such as caching, virtual key management, rate limiting, and logging.
+To leverage the advanced features provided by Malacca while using the Azure OpenAI API, you only need to adjust the `base_url` configuration in the original SDK. This simple change allows you to benefit from Malacca's capabilities such as caching, virtual key management, rate limiting, logging and all other features.
 
 You need to get the following parameters:
 
