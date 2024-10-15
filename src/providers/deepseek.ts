@@ -98,10 +98,13 @@ function getTokenCount(c: Context): { input_tokens: number, output_tokens: numbe
             const output = buf.trim().split('\n\n').at(-2);
             if (output && output.startsWith('data: ')) {
                 const usage_message = JSON.parse(output.slice('data: '.length));
-                return {
-                    input_tokens: usage_message.usage.prompt_tokens || 0,
+                if ('usage' in usage_message) { 
+                    return {
+                        input_tokens: usage_message.usage.prompt_tokens || 0,
                     output_tokens: usage_message.usage.completion_tokens || 0
-                };
+                    };
+                }
+                return { input_tokens: 0, output_tokens: 0 };
             }
         }
     } 
