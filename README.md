@@ -70,6 +70,7 @@ It is written in **TypeScript**: ensuring adaptability to the rapidly evolving A
 
 ### Supported LLM Providers
 
+- [OpenAI](./docs/openai.md)
 - [Azure OpenAI](./docs/azure_openai.md)
 - [DeepSeek](./docs/deepseek.md) 
 
