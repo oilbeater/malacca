@@ -33,6 +33,7 @@ It is written in **TypeScript**: ensuring adaptability to the rapidly evolving A
 
 - A **Cloudflare** account.
 - **Wrangler CLI** installed (used to manage Cloudflare Workers).
+- Enable Workers Analytics Engine. (Head to the [Cloudflare Dashboard](https://dash.cloudflare.com/?to=/:account/workers/analytics-engine)).
 
 ### Deployment Steps
 
